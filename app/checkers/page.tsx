@@ -30,7 +30,6 @@ interface GameData {
 }
 
 const BOARD_SIZE = 8
-const SQUARE_SIZE = 70
 
 const createInitialBoard = (): (Piece | null)[][] => {
   const board = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(null))

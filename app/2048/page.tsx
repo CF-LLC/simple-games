@@ -185,12 +185,12 @@ export default function Game2048() {
 
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [board, score, gameOver])
+  }, [board, score, gameOver, move, undoMove])
 
   // Initialize game on mount
   useEffect(() => {
     initializeBoard()
-  }, [])
+  }, [initializeBoard])
 
   // Get cell background color
   const getCellColor = (value: number) => {

@@ -137,7 +137,7 @@ export default function FlappyBird() {
     }
 
     gameLoopId.current = requestAnimationFrame(gameLoop)
-  }, [bird.y, gameOver, gameStarted, generatePipe, setBird, setPipes, setScore, setGameOver])
+  }, [bird.y, gameOver, gameStarted, generatePipe, pipes, setBird, setPipes, setScore, setGameOver])
 
   // Handle jump
   const handleJump = useCallback(() => {

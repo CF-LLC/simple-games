@@ -65,7 +65,6 @@ export default function SnakeGame() {
 
   const [isClient, setIsClient] = useState(false)
   const [snake, setSnake] = useState<Position[]>(initialSnake)
-  const [direction, setDirection] = useState<Direction>('RIGHT')
   const [gameOver, setGameOver] = useState(false)
   const [score, setScore] = useState(0)
   const [highScore, setHighScore] = useState(0)
@@ -131,7 +130,6 @@ export default function SnakeGame() {
     setCurrentSpeed(BASE_SPEED)
     setIsPlaying(false)
     setSnake(initialSnake)
-    setDirection('RIGHT')
     
     // Reset refs
     nextDirection.current = 'RIGHT'
@@ -139,7 +137,7 @@ export default function SnakeGame() {
     
     // Generate new food position
     updateFoodPosition(initialSnake)
-  }, [setGameOver, setScore, setCurrentSpeed, setIsPlaying, setSnake, setDirection, updateFoodPosition])
+  }, [setGameOver, setScore, setCurrentSpeed, setIsPlaying, setSnake, updateFoodPosition])
 
   // Game loop
   const gameLoop = useCallback((timestamp: number) => {
@@ -211,25 +209,21 @@ export default function SnakeGame() {
       case 'ArrowUp':
         if (currentDirection !== 'DOWN') {
           nextDirection.current = 'UP'
-          setDirection('UP')
         }
         break
       case 'ArrowDown':
         if (currentDirection !== 'UP') {
           nextDirection.current = 'DOWN'
-          setDirection('DOWN')
         }
         break
       case 'ArrowLeft':
         if (currentDirection !== 'RIGHT') {
           nextDirection.current = 'LEFT'
-          setDirection('LEFT')
         }
         break
       case 'ArrowRight':
         if (currentDirection !== 'LEFT') {
           nextDirection.current = 'RIGHT'
-          setDirection('RIGHT')
         }
         break
     }

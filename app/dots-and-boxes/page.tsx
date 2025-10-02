@@ -71,15 +71,7 @@ export default function DotsAndBoxes() {
     )
   }, [lines])
 
-  // Check if a box is completed
-  const checkBox = useCallback((row: number, col: number): boolean => {
-    const topLine = lineExists([col, row], [col + 1, row])
-    const rightLine = lineExists([col + 1, row], [col + 1, row + 1])
-    const bottomLine = lineExists([col, row + 1], [col + 1, row + 1])
-    const leftLine = lineExists([col, row], [col, row + 1])
-    
-    return !!(topLine && rightLine && bottomLine && leftLine)
-  }, [lineExists])
+
 
   // Make a move (for both human and computer players)
   const makeMove = useCallback((start: [number, number], end: [number, number]) => {
@@ -183,46 +175,6 @@ export default function DotsAndBoxes() {
       setGameOver(true)
     }
   }, [gameOver, lineExists, boxes, currentPlayer, setBoxes, setScores, setCurrentPlayer, setGameOver, gridSize])
-
- // Check if a move would complete a box
-  const wouldCompleteBox = useCallback((start: [number, number], end: [number, number]): boolean => {
-    const isHorizontal = start[1] === end[1]
-    const row = start[1]
-    const col = Math.min(start[0], end[0])
-
-    if (isHorizontal) {
-      // Check box above
-      if (row > 0) {
-        const topLine = lineExists([col, row - 1], [col + 1, row - 1])
-        const rightLine = lineExists([col + 1, row - 1], [col + 1, row])
-        const leftLine = lineExists([col, row - 1], [col, row])
-        if (topLine && rightLine && leftLine) return true
-      }
-      // Check box below
-      if (row < GRID_SIZES[gridSize] - 1) {
-        const bottomLine = lineExists([col, row + 1], [col + 1, row + 1])
-        const rightLine = lineExists([col + 1, row], [col + 1, row + 1])
-        const leftLine = lineExists([col, row], [col, row + 1])
-        if (bottomLine && rightLine && leftLine) return true
-      }
-    } else {
-      // Check box to the left
-      if (col > 0) {
-        const topLine = lineExists([col - 1, row], [col, row])
-        const bottomLine = lineExists([col - 1, row + 1], [col, row + 1])
-        const leftLine = lineExists([col - 1, row], [col - 1, row + 1])
-        if (topLine && bottomLine && leftLine) return true
-      }
-      // Check box to the right
-      if (col < GRID_SIZES[gridSize] - 1) {
-        const topLine = lineExists([col, row], [col + 1, row])
-        const bottomLine = lineExists([col, row + 1], [col + 1, row + 1])
-        const rightLine = lineExists([col + 1, row], [col + 1, row + 1])
-        if (topLine && bottomLine && rightLine) return true
-      }
-    }
-    return false
-  }, [gridSize, lineExists])
 
   // Count how many boxes a move would complete
   const countCompletedBoxes = useCallback((start: [number, number], end: [number, number]): number => {

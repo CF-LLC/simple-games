@@ -139,7 +139,7 @@ export default function Asteroids() {
       }))
       return prev - 1
     })
-  }, [setGameOver, setShip])
+  }, [setGameOver, setShip, setLives])
 
   // Check collisions
   const checkCollisions = useCallback(() => {
@@ -194,7 +194,7 @@ export default function Asteroids() {
         handleShipHit()
       }
     })
-  }, [asteroids, bullets, ship, handleShipHit, createAsteroid, setBullets, setAsteroids, setScore])
+  }, [asteroids, bullets, ship, handleShipHit, createAsteroid, setBullets, setAsteroids, setScore, gameOver, score, highScore, setHighScore])
 
   // Game loop
   const gameLoop = useCallback(() => {
@@ -264,7 +264,7 @@ export default function Asteroids() {
 
     // Continue game loop
     gameLoopId.current = requestAnimationFrame(gameLoop)
-  }, [gameStarted, gameOver, checkCollisions])
+  }, [gameStarted, gameOver, checkCollisions, score, highScore, setHighScore])
 
   // Handle keyboard events
   useEffect(() => {
@@ -299,7 +299,7 @@ export default function Asteroids() {
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
     }
-  }, [gameStarted, gameOver, ship.position, ship.rotation, setBullets])
+  }, [gameStarted, gameOver, ship.position, ship.rotation, setBullets, setGameStarted])
 
   // Start game loop
   useEffect(() => {
