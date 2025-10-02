@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 
 type Direction = 'up' | 'down' | 'left' | 'right'
@@ -16,19 +16,8 @@ export default function Game2048() {
   const [previousStates, setPreviousStates] = useState<GameState[]>([])
   const GRID_SIZE = 4
 
-  // Initialize the board
-  const initializeBoard = () => {
-    const newBoard = Array(GRID_SIZE).fill(0).map(() => Array(GRID_SIZE).fill(0))
-    addNewTile(newBoard)
-    addNewTile(newBoard)
-    setBoard(newBoard)
-    setScore(0)
-    setGameOver(false)
-    setPreviousStates([])
-  }
-
   // Add a new tile (2 or 4) to a random empty cell
-  const addNewTile = (currentBoard: number[][]) => {
+  const addNewTile = useCallback((currentBoard: number[][]) => {
     const emptyCells = []
     for (let i = 0; i < GRID_SIZE; i++) {
       for (let j = 0; j < GRID_SIZE; j++) {
@@ -42,10 +31,10 @@ export default function Game2048() {
       const { i, j } = emptyCells[Math.floor(Math.random() * emptyCells.length)]
       currentBoard[i][j] = Math.random() < 0.9 ? 2 : 4
     }
-  }
+  }, [])
 
   // Check if game is over
-  const isGameOver = (currentBoard: number[][]) => {
+  const isGameOver = useCallback((currentBoard: number[][]) => {
     // Check for empty cells
     for (let i = 0; i < GRID_SIZE; i++) {
       for (let j = 0; j < GRID_SIZE; j++) {
@@ -65,25 +54,36 @@ export default function Game2048() {
     }
 
     return true
-  }
+  }, [])
 
   // Save current state before making a move
-  const saveState = () => {
+  const saveState = useCallback(() => {
     setPreviousStates(prev => [...prev, { board: board.map(row => [...row]), score }])
-  }
+  }, [board, score])
 
   // Undo last move
-  const undoMove = () => {
+  const undoMove = useCallback(() => {
     if (previousStates.length > 0 && !gameOver) {
       const lastState = previousStates[previousStates.length - 1]
       setBoard(lastState.board)
       setScore(lastState.score)
       setPreviousStates(prev => prev.slice(0, -1))
     }
-  }
+  }, [previousStates, gameOver])
+
+  // Initialize the board
+  const initializeBoard = useCallback(() => {
+    const newBoard = Array(GRID_SIZE).fill(0).map(() => Array(GRID_SIZE).fill(0))
+    addNewTile(newBoard)
+    addNewTile(newBoard)
+    setBoard(newBoard)
+    setScore(0)
+    setGameOver(false)
+    setPreviousStates([])
+  }, [addNewTile])
 
   // Handle moves
-  const move = (direction: Direction) => {
+  const move = useCallback((direction: Direction) => {
     if (gameOver) return
 
     const rotateBoard = (board: number[][], times: number): number[][] => {
@@ -157,7 +157,7 @@ export default function Game2048() {
       // If no move was made, remove the saved state
       setPreviousStates(prev => prev.slice(0, -1))
     }
-  }
+  }, [board, score, gameOver, saveState, addNewTile, isGameOver])
 
   // Handle keyboard input
   useEffect(() => {
@@ -185,7 +185,7 @@ export default function Game2048() {
 
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [board, score, gameOver, move, undoMove])
+  }, [move, undoMove])
 
   // Initialize game on mount
   useEffect(() => {
