@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
@@ -28,7 +28,7 @@ export default function Minesweeper() {
   const cellSize = gameSize === 'small' ? 36 : gameSize === 'medium' ? 32 : 28
 
   // Initialize board
-  const initializeBoard = () => {
+  const initializeBoard = useCallback(() => {
     const { size } = GAME_CONFIGS[gameSize]
     const newBoard: CellContent[][] = Array(size).fill(null).map(() =>
       Array(size).fill(null).map(() => ({
@@ -42,7 +42,7 @@ export default function Minesweeper() {
     setGameStatus('playing')
     setMinesLeft(GAME_CONFIGS[gameSize].mines)
     setFirstClick(true)
-  }
+  }, [gameSize, setBoard, setGameStatus, setMinesLeft, setFirstClick])
 
   // Place mines avoiding the first clicked cell
   const placeMines = (firstClickRow: number, firstClickCol: number) => {
@@ -193,7 +193,7 @@ export default function Minesweeper() {
   // Initialize game on mount and size change
   useEffect(() => {
     initializeBoard()
-  }, [gameSize])
+  }, [gameSize, initializeBoard])
 
   // Get cell color based on number of neighboring mines
   const getNumberColor = (num: number) => {

@@ -182,7 +182,7 @@ export default function DotsAndBoxes() {
     if (remainingBoxes === 0) {
       setGameOver(true)
     }
-  }, [gameOver, lineExists, boxes, currentPlayer, checkBox, gridSize])
+  }, [gameOver, lineExists, boxes, currentPlayer, setBoxes, setScores, setCurrentPlayer, setGameOver, gridSize])
 
  // Check if a move would complete a box
   const wouldCompleteBox = useCallback((start: [number, number], end: [number, number]): boolean => {
@@ -310,7 +310,7 @@ export default function DotsAndBoxes() {
 
       return () => clearTimeout(timeout)
     }
-  }, [gameMode, currentPlayer, gameOver, lineExists, makeMove, gridSize])
+  }, [gameMode, currentPlayer, gameOver, lineExists, makeMove, gridSize, countCompletedBoxes])
 
   // Render game board
   const renderBoard = () => {

@@ -182,21 +182,21 @@ const DotsAndBoxesPreview = () => (
   </div>
 )
 const games = [
-  { id: 1, title: 'Tic-Tac-Toe', category: 'Board Games', description: "Classic game of X's and O's", preview: <TicTacToePreview /> },
-  { id: 2, title: 'Memory Match', category: 'Puzzle', description: 'Test your memory by matching cards', preview: <MemoryMatchPreview /> },
-  { id: 3, title: 'Snake', category: 'Arcade', description: 'Guide the snake to eat and grow', preview: <SnakePreview /> },
-  { id: 4, title: 'Chess', category: 'Board Games', description: 'Play classic chess against a friend', preview: <ChessPreview /> },
-  { id: 5, title: 'Sudoku', category: 'Puzzle', description: 'Fill the grid with numbers 1-9', preview: <SudokuPreview /> },
-  { id: 6, title: 'Maze', category: 'Arcade', description: 'Navigate through the maze to find the exit', preview: <MazePreview /> },
-  { id: 7, title: 'Pong', category: 'Arcade', description: 'Classic table tennis game', preview: <PongPreview /> },
-  { id: 8, title: 'Checkers', category: 'Board Games', description: 'Jump and capture your opponent\'s pieces', preview: <CheckersPreview /> },
-  { id: 9, title: 'Minesweeper', category: 'Puzzle', description: 'Clear the board without hitting a mine', preview: <MinesweeperPreview /> },
+  { id: 1, title: 'tic-tac-toe', category: 'Board Games', description: "Classic game of X's and O's", preview: <TicTacToePreview /> },
+  { id: 2, title: 'memory-match', category: 'Puzzle', description: 'Test your memory by matching cards', preview: <MemoryMatchPreview /> },
+  { id: 3, title: 'snake', category: 'Arcade', description: 'Guide the snake to eat and grow', preview: <SnakePreview /> },
+  { id: 4, title: 'chess', category: 'Board Games', description: 'Play classic chess against a friend', preview: <ChessPreview /> },
+  { id: 5, title: 'sudoku', category: 'Puzzle', description: 'Fill the grid with numbers 1-9', preview: <SudokuPreview /> },
+  { id: 6, title: 'maze', category: 'Arcade', description: 'Navigate through the maze to find the exit', preview: <MazePreview /> },
+  { id: 7, title: 'pong', category: 'Arcade', description: 'Classic table tennis game', preview: <PongPreview /> },
+  { id: 8, title: 'checkers', category: 'Board Games', description: 'Jump and capture your opponent\'s pieces', preview: <CheckersPreview /> },
+  { id: 9, title: 'minesweeper', category: 'Puzzle', description: 'Clear the board without hitting a mine', preview: <MinesweeperPreview /> },
   { id: 10, title: '2048', category: 'Puzzle', description: 'Combine tiles to reach 2048', preview: <Game2048Preview /> },
-  { id: 11, title: 'Flappy Bird', category: 'Arcade', description: 'Navigate the bird through the pipes', preview: <FlappyBirdPreview /> },
-  { id: 12, title: 'Asteroids', category: 'Arcade', description: 'Destroy asteroids while avoiding collisions', preview: <AsteroidsPreview /> },
-  { id: 13, title: 'Othello', category: 'Board Games', description: 'Flip your opponent\'s pieces to win', preview: <OthelloPreview /> },
-  { id: 14, title: 'Pac-Man', category: 'Arcade', description: 'Navigate the maze and eat all the pellets', preview: <PacManPreview /> },
-  { id: 15, title: 'Dots-and-Boxes', category: 'Board Games', description: 'Complete boxes by connecting dots', preview: <DotsAndBoxesPreview /> },
+  { id: 11, title: 'flappy-bird', category: 'Arcade', description: 'Navigate the bird through the pipes', preview: <FlappyBirdPreview /> },
+  { id: 12, title: 'asteroids', category: 'Arcade', description: 'Destroy asteroids while avoiding collisions', preview: <AsteroidsPreview /> },
+  { id: 13, title: 'othello', category: 'Board Games', description: 'Flip your opponent\'s pieces to win', preview: <OthelloPreview /> },
+  { id: 14, title: 'pac-man', category: 'Arcade', description: 'Navigate the maze and eat all the pellets', preview: <PacManPreview /> },
+  { id: 15, title: 'dots-and-boxes', category: 'Board Games', description: 'Complete boxes by connecting dots', preview: <DotsAndBoxesPreview /> },
 
 ]
 
@@ -254,7 +254,7 @@ export default function Dashboard() {
               </CardContent>
               <CardFooter>
               <Button className="w-full" asChild>
-                <Link href={`/${game.title.toLowerCase().replace(' ', '-')}`}>Play Now</Link>
+                <Link href={`/${game.title.toLowerCase().replace(/\s+/g, '-')}`}>Play Now</Link>
               </Button>
               </CardFooter>
             </Card>

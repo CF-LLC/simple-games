@@ -134,7 +134,7 @@ export default function MazeGame() {
       }
     }
     setupMaze();
-  }, [difficulty]);
+  }, [difficulty, setMaze, setPlayer, setGoal, setWon, setPastPath, setCellSize]);
 
   useEffect(() => {
     function handleResize() {

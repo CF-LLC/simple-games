@@ -121,7 +121,7 @@ export default function Othello() {
     } else {
       setGameOver(true)
     }
-  }, [currentPlayer, getOpponent, hasValidMove])
+  }, [currentPlayer, getOpponent, hasValidMove, setCurrentPlayer, setGameOver])
 
   const handleCellClick = useCallback((row: number, col: number) => {
     if (gameOver || !isValidMove(row, col, currentPlayer, board)) return
@@ -194,7 +194,7 @@ export default function Othello() {
       const timer = setTimeout(botMove, 500)
       return () => clearTimeout(timer)
     }
-  }, [board, checkGameOver, botEnabled, currentPlayer, botMove, countPieces])
+  }, [board, checkGameOver, botEnabled, currentPlayer, botMove, countPieces, setGameOver, setWinner])
 
   const { black, white } = countPieces()
 

@@ -255,7 +255,7 @@ export default function PongGame() {
     return () => {
       cancelAnimationFrame(animationFrameId)
     }
-  }, [gameState, gameMode, scores])
+  }, [gameState, gameMode, scores, setScores])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -279,7 +279,7 @@ export default function PongGame() {
       window.removeEventListener('keyup', handleKeyUp)
       keysPressed.current.clear()
     }
-  }, [])
+  }, [setGameState])
 
   const handleModeChange = (value: string) => {
     setGameMode(value as GameMode)

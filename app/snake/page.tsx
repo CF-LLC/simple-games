@@ -65,7 +65,7 @@ export default function SnakeGame() {
 
   const [isClient, setIsClient] = useState(false)
   const [snake, setSnake] = useState<Position[]>(initialSnake)
-  const [, setDirection] = useState<Direction>('RIGHT')
+  const [direction, setDirection] = useState<Direction>('RIGHT')
   const [gameOver, setGameOver] = useState(false)
   const [score, setScore] = useState(0)
   const [highScore, setHighScore] = useState(0)
@@ -74,42 +74,50 @@ export default function SnakeGame() {
   const [theme, setTheme] = useState<Theme>('neon')
   const [, forceUpdate] = useState({})
   
-  // Use ref for food position to ensure immediate updates
+  // Use refs for values that don't need to trigger re-renders
   const foodRef = useRef<Position>({
     x: 0, y: 0 // Will be set properly during initialization
   })
-  
   const nextDirection = useRef<Direction>('RIGHT')
   const gameLoopId = useRef<number | null>(null)
   const lastMoveTime = useRef<number>(0)
 
-  // Handle client-side initialization
-  useEffect(() => {
-    setIsClient(true)
-    // Do a full reset when the component mounts on client side
-    requestAnimationFrame(() => {
-      resetGame()
-      // Force an update to ensure food is visible
-      forceUpdate({})
-    })
-    return () => {
-      if (gameLoopId.current) cancelAnimationFrame(gameLoopId.current)
+  // Function to generate a valid food position
+  const generateValidFoodPosition = useCallback((currentSnake: Position[]): Position => {
+    if (!isClient) return { x: 0, y: 0 }
+    
+    const positions: Position[] = []
+    for (let x = 0; x < GRID_SIZE; x++) {
+      for (let y = 0; y < GRID_SIZE; y++) {
+        if (!currentSnake.some(segment => segment.x === x && segment.y === y)) {
+          positions.push({ x, y })
+        }
+      }
     }
-  }, [])
-
-  useEffect(() => {
-    if (score > highScore) {
-      setHighScore(score)
+    
+    if (positions.length === 0) {
+      return { x: 0, y: 0 } // Fallback position
     }
-  }, [score, highScore])
+    
+    return positions[Math.floor(Math.random() * positions.length)]
+  }, [isClient])
 
-  const resetGame = () => {
+  // Function to update food position
+  const updateFoodPosition = useCallback((currentSnake: Position[]) => {
+    if (!isClient) return
+    
+    const newPos = generateValidFoodPosition(currentSnake)
+    foodRef.current = newPos
+    forceUpdate({}) // Force a re-render to show the new food position
+  }, [isClient, generateValidFoodPosition, forceUpdate])
+
+  // Reset game function
+  const resetGame = useCallback(() => {
     if (gameLoopId.current) {
       cancelAnimationFrame(gameLoopId.current)
       gameLoopId.current = null
     }
 
-    // Start snake in the middle, pointing right
     const center = Math.floor(GRID_SIZE / 2)
     const initialSnake = [
       { x: center, y: center },       // Head
@@ -129,57 +137,13 @@ export default function SnakeGame() {
     nextDirection.current = 'RIGHT'
     lastMoveTime.current = 0
     
-    // Generate new food position after snake is reset
-    const positions: Position[] = []
-    for (let x = 0; x < GRID_SIZE; x++) {
-      for (let y = 0; y < GRID_SIZE; y++) {
-        if (!initialSnake.some(segment => segment.x === x && segment.y === y)) {
-          positions.push({ x, y })
-        }
-      }
-    }
-    
-    if (positions.length > 0) {
-      const newFoodPos = positions[Math.floor(Math.random() * positions.length)]
-      foodRef.current = newFoodPos
-      forceUpdate({})
-    }
-  }
+    // Generate new food position
+    updateFoodPosition(initialSnake)
+  }, [setGameOver, setScore, setCurrentSpeed, setIsPlaying, setSnake, setDirection, updateFoodPosition])
 
-  // Initial food generation
-  // Function to generate a valid food position
-  const generateValidFoodPosition = (currentSnake: Position[]): Position => {
-    if (!isClient) return { x: 0, y: 0 }
-    
-    const positions: Position[] = []
-    for (let x = 0; x < GRID_SIZE; x++) {
-      for (let y = 0; y < GRID_SIZE; y++) {
-        if (!currentSnake.some(segment => segment.x === x && segment.y === y)) {
-          positions.push({ x, y })
-        }
-      }
-    }
-    
-    if (positions.length === 0) {
-      return { x: 0, y: 0 } // Fallback position
-    }
-    
-    return positions[Math.floor(Math.random() * positions.length)]
-  }
-
-  // Function to update food position
-  const updateFoodPosition = (currentSnake: Position[]) => {
-    if (!isClient) return
-    
-    const newPos = generateValidFoodPosition(currentSnake)
-    foodRef.current = newPos
-    forceUpdate({}) // Force a re-render to show the new food position
-  }
-
-  
-
-  const gameLoop = (timestamp: number) => {
-    if (gameOver) return
+  // Game loop
+  const gameLoop = useCallback((timestamp: number) => {
+    if (!isClient || gameOver) return
 
     if (timestamp - lastMoveTime.current >= currentSpeed) {
       setSnake(prevSnake => {
@@ -201,9 +165,6 @@ export default function SnakeGame() {
           return prevSnake
         }
 
-        // Keep track of snake length for food collision
-        const snakeLength = prevSnake.length
-
         // Create new snake with new head
         let newSnake = [head, ...prevSnake]
 
@@ -211,28 +172,15 @@ export default function SnakeGame() {
         const eatingFood = head.x === foodRef.current.x && head.y === foodRef.current.y
 
         if (eatingFood) {
-          // Update score immediately
+          // Update score
           setScore(prev => prev + 1)
           
-          // Calculate new speed based on new score
-          const newSpeed = Math.max(MIN_SPEED, BASE_SPEED - ((score + 1) * SPEED_DECREASE))
+          // Calculate new speed
+          const newSpeed = Math.max(MIN_SPEED, BASE_SPEED - (score * SPEED_DECREASE))
           setCurrentSpeed(newSpeed)
 
-          // Generate new food immediately
-          const positions: Position[] = []
-          for (let x = 0; x < GRID_SIZE; x++) {
-            for (let y = 0; y < GRID_SIZE; y++) {
-              if (!newSnake.some(segment => segment.x === x && segment.y === y)) {
-                positions.push({ x, y })
-              }
-            }
-          }
-          
-          if (positions.length > 0) {
-            const newFoodPos = positions[Math.floor(Math.random() * positions.length)]
-            foodRef.current = newFoodPos
-            forceUpdate({})
-          }
+          // Generate new food position
+          updateFoodPosition(newSnake)
         } else {
           // Remove tail if not eating
           newSnake = newSnake.slice(0, -1)
@@ -245,21 +193,16 @@ export default function SnakeGame() {
     }
 
     gameLoopId.current = requestAnimationFrame(gameLoop)
-  }
+  }, [isClient, gameOver, currentSpeed, score, updateFoodPosition])
 
-  const startGame = () => {
-    if (!isPlaying && !gameOver) {
-      setIsPlaying(true)
-      lastMoveTime.current = performance.now()
-      gameLoopId.current = requestAnimationFrame(gameLoop)
-    }
-  }
-
+  // Handle keyboard input
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
     if (gameOver) return
 
     if (!isPlaying) {
-      startGame()
+      setIsPlaying(true)
+      lastMoveTime.current = performance.now()
+      gameLoopId.current = requestAnimationFrame(gameLoop)
     }
 
     const currentDirection = nextDirection.current
@@ -290,20 +233,40 @@ export default function SnakeGame() {
         }
         break
     }
-  }, [gameOver, isPlaying, startGame])
+  }, [gameOver, isPlaying, gameLoop])
 
+  // Set up event listeners and initialize
   useEffect(() => {
+    setIsClient(true)
+    resetGame()
+    
     window.addEventListener('keydown', handleKeyPress)
-    return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [isPlaying, gameOver, handleKeyPress])
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress)
+      if (gameLoopId.current) cancelAnimationFrame(gameLoopId.current)
+    }
+  }, [resetGame, handleKeyPress])
 
-  // Prevent hydration mismatch by not rendering game content until client-side
+  // Track high score
+  useEffect(() => {
+    if (score > highScore) {
+      setHighScore(score)
+    }
+  }, [score, highScore])
+
+  // Prevent hydration mismatch
   if (!isClient) {
     return (
       <div className={`flex flex-col items-center justify-start min-h-screen ${themes[theme].background} ${themes[theme].text} p-4`}>
         <h1 className="text-4xl font-bold mb-4">Snake Game</h1>
         <div className="animate-pulse flex space-x-4">
-          <div className="rounded-lg bg-slate-700 h-[${GRID_SIZE * CELL_SIZE}px] w-[${GRID_SIZE * CELL_SIZE}px]"></div>
+          <div 
+            className="rounded-lg bg-slate-700"
+            style={{
+              height: GRID_SIZE * CELL_SIZE,
+              width: GRID_SIZE * CELL_SIZE
+            }}
+          />
         </div>
       </div>
     )
@@ -314,7 +277,6 @@ export default function SnakeGame() {
       <h1 className="text-4xl font-bold mb-4">Snake Game</h1>
       
       <div className="flex flex-row items-center gap-4 mb-4">
-
         <Select value={theme} onValueChange={(value: Theme) => setTheme(value)}>
           <SelectTrigger className="w-[120px]">
             <SelectValue placeholder="Theme" />

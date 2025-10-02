@@ -75,7 +75,7 @@ export default function PacMan(): JSX.Element {
     })
     setGhosts(initializeGhosts())
     setGameOver(false)
-  }, [initializeGhosts])
+  }, [initializeGhosts, setBoard, setPlayer1, setPlayer2, setGhosts, setGameOver])
 
   // Check if move is valid
   const isValidMove = useCallback((x: number, y: number): boolean => {
@@ -136,7 +136,7 @@ export default function PacMan(): JSX.Element {
       setPlayer(prev => ({ ...prev, score: prev.score + POWER_PELLET_VALUE, powerPellet: 300 }))
       setGhosts(prev => prev.map(ghost => ({ ...ghost, scared: 300 })))
     }
-  }, [board, getNextPosition, isValidMove])
+  }, [board, getNextPosition, isValidMove, setBoard, setGhosts])
 
   // Update ghost positions
   const updateGhosts = useCallback(() => {
@@ -213,7 +213,7 @@ export default function PacMan(): JSX.Element {
         }
       }
     })
-  }, [ghosts, player1.position, player2.position, player1.powerPellet, player2.powerPellet, gameMode])
+  }, [ghosts, player1.position, player2.position, player1.powerPellet, player2.powerPellet, gameMode, setGhosts, setPlayer1, setPlayer2, setGameOver])
 
   // Game loop
   useEffect(() => {

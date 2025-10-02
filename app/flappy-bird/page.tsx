@@ -137,7 +137,7 @@ export default function FlappyBird() {
     }
 
     gameLoopId.current = requestAnimationFrame(gameLoop)
-  }, [bird.y, gameOver, gameStarted, generatePipe])
+  }, [bird.y, gameOver, gameStarted, generatePipe, setBird, setPipes, setScore, setGameOver])
 
   // Handle jump
   const handleJump = useCallback(() => {
@@ -151,7 +151,7 @@ export default function FlappyBird() {
         velocity: JUMP_FORCE
       }))
     }
-  }, [gameOver, gameStarted])
+  }, [gameOver, gameStarted, setGameStarted, setBird])
 
   // Handle key press
   useEffect(() => {
@@ -183,7 +183,7 @@ export default function FlappyBird() {
     if (gameOver && score > highScore) {
       setHighScore(score)
     }
-  }, [gameOver, score, highScore])
+  }, [gameOver, score, highScore, setHighScore])
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-blue-100 p-4">

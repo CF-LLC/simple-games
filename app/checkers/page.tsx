@@ -223,7 +223,7 @@ export default function CheckersGame() {
         return () => clearTimeout(timer)
       }
     }
-  }, [gameState, gameMode, gameData.currentPlayer, gameData.board, gameData.blackScore])
+  }, [gameState, gameMode, gameData.currentPlayer, gameData.board, gameData.blackScore, setGameData, getValidMoves, getAllValidMoves])
 
   const handleSquareClick = (row: number, col: number, isAIMove: boolean = false) => {
     console.log('Square clicked:', row, col, isAIMove ? '(AI Move)' : '(Human Move)')

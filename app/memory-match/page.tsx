@@ -89,7 +89,7 @@ export default function MemoryMatch() {
     if (cards.every(card => card.isMatched)) {
       setGameOver(true)
     }
-  }, [cards])
+  }, [cards, setGameOver])
 
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -99,7 +99,7 @@ export default function MemoryMatch() {
       }, 1000)
     }
     return () => clearInterval(interval)
-  }, [gameOver])
+  }, [gameOver, setTimer])
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground p-4">

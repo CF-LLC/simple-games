@@ -121,7 +121,7 @@ export default function Asteroids() {
     setLives(3)
     setGameOver(false)
     keysPressed.current.clear()
-  }, [initializeAsteroids])
+  }, [initializeAsteroids, setBullets, setScore, setLives, setGameOver])
 
   // Handle ship hit
   const handleShipHit = useCallback(() => {
@@ -139,10 +139,14 @@ export default function Asteroids() {
       }))
       return prev - 1
     })
-  }, [])
+  }, [setGameOver, setShip])
 
   // Check collisions
   const checkCollisions = useCallback(() => {
+    // Update high score on game over
+    if (gameOver && score > highScore) {
+      setHighScore(score)
+    }
     // Bullet-asteroid collisions
     bullets.forEach((bullet, bulletIndex) => {
       asteroids.forEach((asteroid, asteroidIndex) => {
@@ -190,11 +194,16 @@ export default function Asteroids() {
         handleShipHit()
       }
     })
-  }, [asteroids, bullets, ship, handleShipHit, createAsteroid])
+  }, [asteroids, bullets, ship, handleShipHit, createAsteroid, setBullets, setAsteroids, setScore])
 
   // Game loop
   const gameLoop = useCallback(() => {
     if (!gameStarted || gameOver) return
+
+    // Update high score
+    if (gameOver && score > highScore) {
+      setHighScore(score)
+    }
 
     // Update ship
     setShip(prev => {
@@ -290,7 +299,7 @@ export default function Asteroids() {
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
     }
-  }, [gameStarted, gameOver, ship.position, ship.rotation])
+  }, [gameStarted, gameOver, ship.position, ship.rotation, setBullets])
 
   // Start game loop
   useEffect(() => {
@@ -302,7 +311,7 @@ export default function Asteroids() {
         cancelAnimationFrame(gameLoopId.current)
       }
     }
-  }, [gameLoop, gameStarted, gameOver])
+  }, [gameLoop])
 
   // Update high score
   useEffect(() => {
