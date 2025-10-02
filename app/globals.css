@@ -1,3 +1,7 @@
+/* Prevent scrolling on arrow keys and hide scrollbars for maze game */
+html, body {
+  
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
