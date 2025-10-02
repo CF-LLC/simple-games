@@ -116,8 +116,8 @@ export default function Game2048() {
 
     // Process each row
     for (let i = 0; i < GRID_SIZE; i++) {
-      let row = newBoard[i]
-      let newRow = row.filter(cell => cell !== 0)
+      const row = newBoard[i]
+      const newRow = row.filter((cell: number) => cell !== 0)
       
       // Merge tiles
       for (let j = 0; j < newRow.length - 1; j++) {
@@ -135,7 +135,7 @@ export default function Game2048() {
       }
 
       // Check if the row changed
-      if (newRow.some((cell, index) => cell !== row[index])) {
+      if (newRow.some((cell: number, index: number) => cell !== row[index])) {
         moved = true
       }
 

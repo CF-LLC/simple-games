@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
@@ -24,15 +24,31 @@ export default function TicTacToe() {
   const [aiDifficulty, setAiDifficulty] = useState<'easy' | 'hard'>('easy')
   const [scores, setScores] = useState<Scores>({ X: 0, O: 0, draw: 0 })
 
+  const makeAiMove = useCallback(() => {
+    const availableMoves = board.reduce((acc, cell, index) => {
+      if (cell === null) acc.push(index)
+      return acc
+    }, [] as number[])
+
+    let move: number
+    if (aiDifficulty === 'easy') {
+      move = availableMoves[Math.floor(Math.random() * availableMoves.length)]
+    } else {
+      move = getBestMove(board, 'O')
+    }
+
+    handleClick(move)
+  }, [aiDifficulty, board])
+
   useEffect(() => {
     if (gameMode === 'ai' && currentPlayer === 'O' && !winner) {
       const timer = setTimeout(() => makeAiMove(), 500)
       return () => clearTimeout(timer)
     }
-  }, [board, currentPlayer, gameMode, winner])
+  }, [gameMode, currentPlayer, winner, makeAiMove])
 
   const checkWinner = (board: Board): Player => {
-    for (let combo of winningCombinations) {
+    for (const combo of winningCombinations) {
       if (board[combo[0]] && board[combo[0]] === board[combo[1]] && board[combo[0]] === board[combo[2]]) {
         return board[combo[0]] as 'X' | 'O'
       }
@@ -59,21 +75,7 @@ export default function TicTacToe() {
     }
   }
 
-  const makeAiMove = () => {
-    const availableMoves = board.reduce((acc, cell, index) => {
-      if (cell === null) acc.push(index)
-      return acc
-    }, [] as number[])
 
-    let move: number
-    if (aiDifficulty === 'easy') {
-      move = availableMoves[Math.floor(Math.random() * availableMoves.length)]
-    } else {
-      move = getBestMove(board, 'O')
-    }
-
-    handleClick(move)
-  }
 
   const getBestMove = (board: Board, player: 'X' | 'O'): number => {
     const availableMoves = board.reduce((acc, cell, index) => {

@@ -69,31 +69,9 @@ export default function CheckersGame() {
     blackScore: 0
   })
 
-  const handleModeChange = (value: string) => {
-    console.log('Mode changed to:', value)
-    setGameMode(value as GameMode)
-    setGameData({
-      board: createInitialBoard(),
-      selectedPiece: null,
-      validMoves: [],
-      currentPlayer: 'red',
-      redScore: 0,
-      blackScore: 0
-    })
-    setGameState('start')
-  }
 
-  const resetGame = () => {
-    setGameData({
-      board: createInitialBoard(),
-      selectedPiece: null,
-      validMoves: [],
-      currentPlayer: 'red',
-      redScore: 0,
-      blackScore: 0
-    })
-    setGameState('start')
-  }
+
+
 
   const getSquareColor = (row: number, col: number) => {
     const isSquareDark = (row + col) % 2 === 1
@@ -178,31 +156,7 @@ export default function CheckersGame() {
     return moves
   }
 
-  const evaluateBoard = () => {
-    let score = 0
-    for (let row = 0; row < BOARD_SIZE; row++) {
-      for (let col = 0; col < BOARD_SIZE; col++) {
-        const piece = gameData.board[row][col]
-        if (piece) {
-          // Increase the value of kings and advanced positions
-          const baseValue = piece.isKing ? 10 : 5
-          const positionValue = piece.type === 'black' ? 
-            (BOARD_SIZE - row) * 0.5 : // Black pieces want to move down
-            row * 0.5 // Red pieces want to move up
-          
-          // Add bonus for center control
-          const centerBonus = (Math.abs(col - 3.5) < 2 && Math.abs(row - 3.5) < 2) ? 2 : 0
-          
-          if (piece.type === 'black') {
-            score += baseValue + positionValue + centerBonus
-          } else {
-            score -= baseValue + positionValue + centerBonus
-          }
-        }
-      }
-    }
-    return score
-  }
+
 
 
 

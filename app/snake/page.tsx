@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
@@ -65,7 +65,7 @@ export default function SnakeGame() {
 
   const [isClient, setIsClient] = useState(false)
   const [snake, setSnake] = useState<Position[]>(initialSnake)
-  const [direction, setDirection] = useState<Direction>('RIGHT')
+  const [, setDirection] = useState<Direction>('RIGHT')
   const [gameOver, setGameOver] = useState(false)
   const [score, setScore] = useState(0)
   const [highScore, setHighScore] = useState(0)
@@ -176,10 +176,7 @@ export default function SnakeGame() {
     forceUpdate({}) // Force a re-render to show the new food position
   }
 
-  const generateInitialFood = () => {
-    if (!isClient) return
-    updateFoodPosition(snake)
-  }
+  
 
   const gameLoop = (timestamp: number) => {
     if (gameOver) return
@@ -204,8 +201,8 @@ export default function SnakeGame() {
           return prevSnake
         }
 
-        // Keep the old tail in case we eat food
-        const tail = prevSnake[prevSnake.length - 1]
+        // Keep track of snake length for food collision
+        const snakeLength = prevSnake.length
 
         // Create new snake with new head
         let newSnake = [head, ...prevSnake]
@@ -258,7 +255,7 @@ export default function SnakeGame() {
     }
   }
 
-  const handleKeyPress = (e: KeyboardEvent) => {
+  const handleKeyPress = useCallback((e: KeyboardEvent) => {
     if (gameOver) return
 
     if (!isPlaying) {
@@ -293,12 +290,12 @@ export default function SnakeGame() {
         }
         break
     }
-  }
+  }, [gameOver, isPlaying, startGame])
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [isPlaying, gameOver])
+  }, [isPlaying, gameOver, handleKeyPress])
 
   // Prevent hydration mismatch by not rendering game content until client-side
   if (!isClient) {

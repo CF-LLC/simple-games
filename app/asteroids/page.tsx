@@ -204,7 +204,7 @@ export default function Asteroids() {
 
       const thrusting = keysPressed.current.has('ArrowUp')
       
-      let velocity = { ...prev.velocity }
+      const velocity = { ...prev.velocity }
       if (thrusting) {
         velocity.x += Math.cos(rotation * Math.PI / 180) * THRUST_SPEED
         velocity.y += Math.sin(rotation * Math.PI / 180) * THRUST_SPEED

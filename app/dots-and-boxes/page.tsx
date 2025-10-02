@@ -37,6 +37,7 @@ interface Box {
   lines: Line[]
 }
 
+// eslint-disable-next-line react-hooks/exhaustive-deps
 export default function DotsAndBoxes() {
   const [gameMode, setGameMode] = useState<GameMode>('pvp')
   const [gridSize, setGridSize] = useState<GridSize>('medium')

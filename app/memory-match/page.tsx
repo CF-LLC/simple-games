@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
@@ -27,21 +27,7 @@ export default function MemoryMatch() {
   const [timer, setTimer] = useState(0)
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy')
 
-  useEffect(() => {
-    resetGame()
-  }, [difficulty])
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout
-    if (!gameOver) {
-      interval = setInterval(() => {
-        setTimer(prevTimer => prevTimer + 1)
-      }, 1000)
-    }
-    return () => clearInterval(interval)
-  }, [gameOver])
-
-  const resetGame = () => {
+  const resetGame = useCallback(() => {
     const pairsCount = difficulties[difficulty]
     const shuffledEmojis = [...emojis.slice(0, pairsCount), ...emojis.slice(0, pairsCount)]
       .sort(() => Math.random() - 0.5)
@@ -56,9 +42,9 @@ export default function MemoryMatch() {
     setMoves(0)
     setGameOver(false)
     setTimer(0)
-  }
+  }, [difficulty])
 
-  const handleCardClick = (id: number) => {
+  const handleCardClick = useCallback((id: number) => {
     if (flippedCards.length === 2) return
     
     setCards(prevCards => 
@@ -97,13 +83,23 @@ export default function MemoryMatch() {
         }, 1000)
       }
     }
-  }
+  }, [cards, flippedCards])
 
   useEffect(() => {
     if (cards.every(card => card.isMatched)) {
       setGameOver(true)
     }
   }, [cards])
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout
+    if (!gameOver) {
+      interval = setInterval(() => {
+        setTimer(prevTimer => prevTimer + 1)
+      }, 1000)
+    }
+    return () => clearInterval(interval)
+  }, [gameOver])
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground p-4">

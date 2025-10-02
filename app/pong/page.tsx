@@ -48,7 +48,6 @@ const BALL_SIZE = 10
 const BALL_SPEED = 5
 const PADDLE_SPEED = 12
 const INITIAL_BALL_SPEED = 5
-const MAX_BOUNCE_ANGLE = Math.PI / 4 // 45 degrees
 const MOVE_SPEED = 20 // Speed for all paddles
 
 const getRandomDirection = () => (Math.random() > 0.5 ? 1 : -1)
