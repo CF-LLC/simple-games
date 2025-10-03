@@ -258,8 +258,10 @@ export default function PongGame() {
   }, [gameState, gameMode, scores, setScores])
 
   useEffect(() => {
+    const keysPressedRef = keysPressed.current
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      keysPressed.current.add(e.key.toLowerCase())
+      keysPressedRef.add(e.key.toLowerCase())
       
       // Handle escape key separately (not for continuous movement)
       if (e.key === 'Escape') {
@@ -268,7 +270,7 @@ export default function PongGame() {
     }
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      keysPressed.current.delete(e.key.toLowerCase())
+      keysPressedRef.delete(e.key.toLowerCase())
     }
 
     window.addEventListener('keydown', handleKeyDown)
@@ -277,9 +279,7 @@ export default function PongGame() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
-      // Store ref value in closure to prevent stale ref access
-      const keys = keysPressed.current
-      keys.clear()
+      keysPressedRef.clear()
     }
   }, [setGameState])
 

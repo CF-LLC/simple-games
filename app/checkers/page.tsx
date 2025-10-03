@@ -134,30 +134,6 @@ export default function CheckersGame() {
     return moves
   }
 
-  const getAllValidMoves = (player: 'red' | 'black') => {
-    const moves: { from: { row: number; col: number }; to: { row: number; col: number } }[] = []
-    
-    for (let row = 0; row < BOARD_SIZE; row++) {
-      for (let col = 0; col < BOARD_SIZE; col++) {
-        const piece = gameData.board[row][col]
-        if (piece && piece.type === player) {
-          const validMoves = getValidMoves(row, col)
-          validMoves.forEach(move => {
-            moves.push({
-              from: { row, col },
-              to: move
-            })
-          })
-        }
-      }
-    }
-
-    return moves
-  }
-
-
-
-
 
   useEffect(() => {
     console.log('Game State:', gameState)

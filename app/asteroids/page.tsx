@@ -311,7 +311,7 @@ export default function Asteroids() {
         cancelAnimationFrame(gameLoopId.current)
       }
     }
-  }, [gameLoop])
+  }, [gameLoop, gameStarted, gameOver])
 
   // Update high score
   useEffect(() => {
