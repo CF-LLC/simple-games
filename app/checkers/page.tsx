@@ -166,7 +166,54 @@ export default function CheckersGame() {
     
     if (gameState === 'playing' && gameMode === 'computer' && gameData.currentPlayer === 'black') {
       console.log('AI turn triggered')
-      const moves = getAllValidMoves('black')
+      // Move the getAllValidMoves logic inside the effect to avoid the dependency
+      const moves: { from: { row: number; col: number }; to: { row: number; col: number } }[] = []
+      
+      // Get all valid moves for black pieces
+      for (let row = 0; row < BOARD_SIZE; row++) {
+        for (let col = 0; col < BOARD_SIZE; col++) {
+          const piece = gameData.board[row][col]
+          if (piece && piece.type === 'black') {
+            // Get valid moves for this piece
+            const validMoves: { row: number; col: number }[] = []
+            const directions = piece.isKing ? [1, -1] : [1]
+            
+            // Check regular diagonal moves and jumps
+            directions.forEach(dir => {
+              [-1, 1].forEach(diagCol => {
+                // Regular move
+                const newRow = row + dir
+                const newCol = col + diagCol
+                if (
+                  newRow >= 0 && newRow < BOARD_SIZE &&
+                  newCol >= 0 && newCol < BOARD_SIZE
+                ) {
+                  if (!gameData.board[newRow][newCol]) {
+                    validMoves.push({ row: newRow, col: newCol })
+                  } else if (
+                    gameData.board[newRow][newCol]?.type !== piece.type &&
+                    newRow + dir >= 0 && newRow + dir < BOARD_SIZE &&
+                    newCol + diagCol >= 0 && newCol + diagCol < BOARD_SIZE &&
+                    !gameData.board[newRow + dir][newCol + diagCol]
+                  ) {
+                    // Jump move available
+                    validMoves.push({ row: newRow + dir, col: newCol + diagCol })
+                  }
+                }
+              })
+            })
+            
+            // Add valid moves with their starting position
+            validMoves.forEach(move => {
+              moves.push({
+                from: { row, col },
+                to: move
+              })
+            })
+          }
+        }
+      }
+      
       console.log('Available moves:', moves)
       
       if (moves.length > 0) {
@@ -222,7 +269,7 @@ export default function CheckersGame() {
         return () => clearTimeout(timer)
       }
     }
-  }, [gameState, gameMode, gameData.currentPlayer, gameData.board, gameData.blackScore, setGameData, getValidMoves, getAllValidMoves])
+  }, [gameState, gameMode, gameData])
 
   const handleSquareClick = (row: number, col: number, isAIMove: boolean = false) => {
     console.log('Square clicked:', row, col, isAIMove ? '(AI Move)' : '(Human Move)')

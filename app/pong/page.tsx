@@ -277,7 +277,9 @@ export default function PongGame() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
-      keysPressed.current.clear()
+      // Store ref value in closure to prevent stale ref access
+      const keys = keysPressed.current
+      keys.clear()
     }
   }, [setGameState])
 

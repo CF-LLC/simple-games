@@ -79,8 +79,7 @@ export default function DotsAndBoxes() {
     if (gameOver || existingLine) return
 
     const newLine = { start, end, owner: currentPlayer }
-    const newLines = [...lines, newLine]
-    setLines(newLines)
+    setLines(prev => [...prev, newLine])
 
     // Check if any boxes were completed
     let boxesCompleted = false

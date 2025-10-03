@@ -299,7 +299,7 @@ export default function Asteroids() {
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
     }
-  }, [gameStarted, gameOver, ship.position, ship.rotation, setBullets, setGameStarted])
+  }, [gameStarted, gameOver, ship])
 
   // Start game loop
   useEffect(() => {
